@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: api-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/poe_pricer
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
