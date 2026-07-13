@@ -14,3 +14,10 @@ spring:
 
   flyway:
     enabled: true
+
+poe:
+  trade:
+    enabled: ${POE_TRADE_ENABLED:false}
+    base-url: ${POE_TRADE_BASE_URL:https://www.pathofexile.com}
+    user-agent: ${POE_USER_AGENT}
+    max-fetch-size: ${POE_TRADE_MAX_FETCH_SIZE:10}
