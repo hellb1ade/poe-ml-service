@@ -1,3 +1,66 @@
+server:
+  port: ${COLLECTOR_SERVER_PORT:8081}
+
 spring:
   application:
     name: collector-service
+
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/poe_pricer}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+
+  flyway:
+    enabled: true
+    schemas: collector
+    default-schema: collector
+    create-schemas: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+poe:
+  api:
+    base-url: ${POE_API_BASE_URL:https://api.pathofexile.com}
+    oauth-base-url: ${POE_OAUTH_BASE_URL:https://www.pathofexile.com}
+    client-id: ${POE_CLIENT_ID:}
+    client-secret: ${POE_CLIENT_SECRET:}
+    access-token: ${POE_ACCESS_TOKEN:}
+    contact: ${POE_CONTACT:}
+    version: ${POE_APP_VERSION:0.1.0}
+    connect-timeout: ${POE_CONNECT_TIMEOUT:10s}
+    read-timeout: ${POE_READ_TIMEOUT:30s}
+
+  collector:
+    enabled: ${POE_COLLECTOR_ENABLED:false}
+    realm: ${POE_REALM:pc}
+    league: ${POE_LEAGUE:}
+    stream-key: ${POE_STREAM_KEY:public-stash-pc}
+    fallback-request-delay: ${POE_FALLBACK_REQUEST_DELAY:1s}
+    idle-delay: ${POE_IDLE_DELAY:5s}
+    max-backoff: ${POE_MAX_BACKOFF:1m}
+    only-priced: ${POE_ONLY_PRICED:true}
+
+  trade-dataset:
+    enabled: ${POE_TRADE_DATASET_ENABLED:false}
+    base-url: ${POE_TRADE_BASE_URL:https://www.pathofexile.com}
+    user-agent: ${POE_USER_AGENT:}
+    league: ${POE_TRADE_LEAGUE:}
+    run-key: ${POE_TRADE_DATASET_RUN_KEY:}
+    category: ${POE_TRADE_DATASET_CATEGORY:weapon.bow}
+    availability: ${POE_TRADE_DATASET_AVAILABILITY:available}
+    target-size: ${POE_TRADE_DATASET_TARGET_SIZE:1000}
+    fetch-size: ${POE_TRADE_DATASET_FETCH_SIZE:10}
+    search-request-delay: ${POE_TRADE_DATASET_SEARCH_REQUEST_DELAY:11s}
+    fetch-request-delay: ${POE_TRADE_DATASET_FETCH_REQUEST_DELAY:5s}
+    connect-timeout: ${POE_TRADE_CONNECT_TIMEOUT:10s}
+    read-timeout: ${POE_TRADE_READ_TIMEOUT:45s}
+    price-currency: ${POE_TRADE_DATASET_PRICE_CURRENCY:divine}
+    minimum-price: ${POE_TRADE_DATASET_MINIMUM_PRICE:1}
+    maximum-price: ${POE_TRADE_DATASET_MAXIMUM_PRICE:400}

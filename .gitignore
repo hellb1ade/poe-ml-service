@@ -6,6 +6,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea/
+.env
 *.iws
 *.iml
 *.ipr
@@ -59,3 +60,13 @@ replay_pid*
 
 ### Mac OS ###
 .DS_Store
+
+### Python ###
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+### Generated ML artifacts ###
+ml-service/models/*
+!ml-service/models/.gitkeep

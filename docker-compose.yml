@@ -3,8 +3,46 @@ services:
     image: postgres:16
     container_name: poe-postgres
     environment:
-      POSTGRES_DB: poe_pricer
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-poe_pricer}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
       - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-poe_pricer}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ml-service:
+    build:
+      context: ./ml-service
+    container_name: poe-ml-service
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-poe_pricer}"
+      ML_MODEL_DIR: /service/models
+      ML_TRAINING_RUN_KEYS: ${ML_TRAINING_RUN_KEYS:-mirage-rare-bows-20260714-v2,mirage-rare-bows-20260714-v6}
+      ML_HOLDOUT_RUN_KEY: ${ML_HOLDOUT_RUN_KEY:-mirage-rare-bows-20260714-v6}
+      ML_TRAINING_MAXIMUM_PRICE: ${ML_TRAINING_MAXIMUM_PRICE:-400}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml-service/models:/service/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready', timeout=2)
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
